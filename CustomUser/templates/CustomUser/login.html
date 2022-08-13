@@ -1,0 +1,18 @@
+{% if error %}
+<h3>Error: {{ error }} </h3>
+{% endif %}
+<form method="post">
+    {% csrf_token %}
+    <div>
+        <label for="email">Email Address</label>
+        <input type="email", name="email", autocomplete="username">
+    </div>
+
+    <div>
+        <label for="password">Password</label>
+        <input type="password", name="password", autocomplete="current-password">
+    </div>
+    <button type="submit">Submit</button>
+</form>
+<br>
+<b>Dont have an account?<a href="{% url 'signup' %}">Register</a><b>

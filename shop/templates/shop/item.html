@@ -1,0 +1,23 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+    <h2 id="title"></h2>
+    <img id="img" src="" alt="">
+    <script>
+        $.ajax({
+            url: '../ajax/get_item',
+            type: 'POST',
+            data: {'csrfmiddlewaretoken': "{{csrf_token}}","item_type":"{{ item_type }}","item_id":"{{item_id}}"},
+            success: function (data, status, xhr){
+                console.log(data);
+                if (data.status == 'ok'){
+                    $('#title').text(data.item.name);
+                    $('#img').attr('src', data.item.images[0].image_url);
+                    $('#img').attr('alt', data.item.images[0].image_alt);
+                }else{
+                    alert(`Error: ${data.error}`);
+                }
+            }
+        });
+    </script>
+{% endblock %}

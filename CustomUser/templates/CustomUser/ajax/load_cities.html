@@ -1,0 +1,6 @@
+{% comment %} <select name="city" required="" id="id_city"> {% endcomment %}
+    <option value="" selected="">---------</option>
+    {% for city in cities %}
+    <option value="{{ city.id }}">{{ city.name }}</option>
+    {% endfor %}
+{% comment %} </select> {% endcomment %}

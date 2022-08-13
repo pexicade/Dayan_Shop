@@ -1,0 +1,26 @@
+/* Font */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,700;0,800;1,300;1,600;1,700&family=Quicksand:wght@300;400;500;600;700&display=swap');
+@font-face {
+  font-family: 'Rooney Pro';
+  src: local('Rooney Pro Heavy'), local('Rooney-Pro-Heavy'),
+      url('fonts/RooneyPro-Heavy.woff2') format('woff2'),
+      url('fonts/RooneyPro-Heavy.woff') format('woff'),
+      url('fonts/RooneyPro-Heavy.ttf') format('truetype');
+
+  font-weight: 900;
+  font-style: normal;
+}
+
+*{
+  box-sizing: border-box;
+}
+
+body {
+    font-family: 'Quicksand', serif;
+    font-style: normal;
+    font-weight: 400;
+    letter-spacing: 0;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
