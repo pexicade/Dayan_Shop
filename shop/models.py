@@ -64,8 +64,9 @@ class Models(models.Model):
     bust = models.CharField(_("bust"), max_length=120, blank=True, null=False)
     waist = models.CharField(_("waist"), max_length=120, blank=True, null=False)
     hip = models.CharField(_("hip"), max_length=120, blank=True, null=False)
+    image = models.ImageField(upload_to='shop/models/%Y/%m/%d', verbose_name=_('Image'), blank=True, null=True)
+    image_alt = models.CharField(max_length=200, verbose_name=_('Image alt'), blank=True, null=True)
     quick_add = models.TextField(_("quick add"), blank=True, null=True, help_text=_("add in the following format: <field name>:<value>.\nadd each field in one line"))
-
     date_created = models.DateTimeField(verbose_name=_("date created"), default=timezone.now)
     date_updated = models.DateTimeField(verbose_name=_("date updated"), auto_now=True)
 
@@ -81,12 +82,34 @@ class Models(models.Model):
         self.quick_add = ''
         super(Models, self).save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs) -> None:
+        if self.image:
+            if os.path.isfile(self.image.path):
+                os.remove(self.image.path)
+        super(Models, self).delete(*args, **kwargs)
+
     def __str__(self) -> str:
         return f"{self.firstname} {self.lastname}"
     
     class Meta:
         verbose_name = _('Model')
         verbose_name_plural = _('Models')
+
+    def get_absolute_url(self):
+        return reverse('model', kwargs={'pk': self.pk})
+
+    def to_json(self) -> Dict:
+        return {
+            'id': self.pk,
+            'firstname': self.firstname,
+            'lastname': self.lastname,
+            'height': self.height,
+            'weight': self.weight,
+            'bust': self.bust,
+            'waist': self.waist,
+            'hip': self.hip,
+            'image': self.image.url if self.image else None,
+        }
 
 class SizeChoices(models.Model):
     name = models.CharField(_("name"), max_length=200, blank=False, null=False)
@@ -142,6 +165,18 @@ class ClotheSizeInfo(models.Model):
 
     def __str__(self) -> str:
         return f"{self.fit}"
+
+    def to_json(self) -> dict:
+        return {
+            'id': self.pk,
+            'fit': self.fit,
+            'length': self.length,
+            'bust': self.bust,
+            'waist': self.waist,
+            'hip': self.hip,
+            'undergarments': self.undergarments,
+            'fabric': self.fabric,
+        }
 
 
 class ItemImage(models.Model):
@@ -234,6 +269,13 @@ class Color(models.Model):
 
     def __str__(self) -> str:
         return f'{self.name}'
+
+    def to_json(self) -> dict:
+        return {
+            'id': self.pk,
+            'name': self.name,
+            'color_code': self.color_code
+        }
 
 class Item(models.Model):
     name = models.CharField(_('name'), max_length=150, blank= False, null= False)
@@ -374,6 +416,8 @@ class Dress(Item):
                     for item in getattr(self, field.name).all():
                         inner_data.append(item.to_json())
                     data[field.name] = inner_data
+                elif field.get_internal_type() == 'ForeignKey':
+                    data[field.name] = getattr(self, field.name).to_json()
                 else:
                     data[field.name] = str(getattr(self, field.name))
         return data
