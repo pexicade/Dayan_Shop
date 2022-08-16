@@ -1,16 +1,21 @@
 {% extends 'shop/base.html' %}
 {% block content %}
 {% for dress in dresses%}
-    <div class="item">
-        <a href="Dress/{{dress.pk}}">
-            <h5>{{dress.name}}</h5>
-        </a>
-        <h4 id="add_to_cart" item_id="{{ dress.pk }}">Add to cart</h4>
-        <h4 id="remove_from_cart" item_id="{{ dress.pk }}">Remove from cart</h4>
+    <div class="item" style="margin: 10px; border-bottom: 2px black dotted; width: 450px;">
+        <div style=" padding-left: 10px;">
+            <a href="Dress/{{dress.pk}}" >
+                <h5>{{dress.name}}</h5>
+            </a>
+            <!-- h4 with a style -->
+            <h4 id="add_to_cart" item_id="{{ dress.pk }}" style="cursor: pointer; color: #00bcd4;">Add to cart</h4>
+            <h4 id="remove_from_cart" item_id="{{ dress.pk }}" style="cursor: pointer; color: #ed5307;">Remove from cart</h4>
+        </div>
     </div>
 {% endfor %}
-<button id="get_cart" style="width: 100px; margin: 10px;">Get cart</button>
-<button id="clear_cart" style="width: 100px; margin: 10px;" >Clear Cart</button>
+<div style="display: inline;">
+    <button id="get_cart" style="width: 100px; margin: 10px;">Get cart</button>
+    <button id="clear_cart" style="width: 100px; margin: 10px;" >Clear Cart</button>
+</div>
 <script>
     // add an event listener to each div's h4 with id='add_to_cart', send ajax request to add to cart
     $('.item #add_to_cart').click(function(e){
