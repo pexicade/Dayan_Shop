@@ -55,6 +55,14 @@ class Brand(models.Model):
     def __str__(self) -> str:
         return self.name
 
+    def to_json(self) -> dict:
+        return {
+            'id': self.pk,
+            'name': self.name,
+            'about': self.about,
+            'website': self.website,
+        }
+
 
 class Models(models.Model):
     firstname = models.CharField(_("fist name"), max_length=120, blank=True, null=False)
