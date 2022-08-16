@@ -1,8 +1,66 @@
 {% extends 'shop/base.html' %}
 {% block content %}
-<h5><a href="Dress/15">In the City Tan Surplice Sleeveless Jumpsuit</a></a></h5>
-<h5><a href="Dress/20">In the City Olive Green Surplice Sleeveless Jumpsuit</a></h5>
-<h5><a href="Dress/19">In the City Black Surplice Sleeveless Jumpsuit</a></h5>
-<h5><a href="Dress/29">Nolan Mustard Yellow Print Dress</a></h5>
-<h5><a href="Dress/21">Nolan Navy Blue Print Dress</a></h5>
+{% for dress in dresses%}
+    <div class="item">
+        <a href="Dress/{{dress.pk}}">
+            <h5>{{dress.name}}</h5>
+        </a>
+        <h4 id="add_to_cart" item_id="{{ dress.pk }}">Add to cart</h4>
+        <h4 id="remove_from_cart" item_id="{{ dress.pk }}">Remove from cart</h4>
+    </div>
+{% endfor %}
+<button id="get_cart" style="width: 100px; margin: 10px;">Get cart</button>
+<button id="clear_cart" style="width: 100px; margin: 10px;" >Clear Cart</button>
+<script>
+    // add an event listener to each div's h4 with id='add_to_cart', send ajax request to add to cart
+    $('.item #add_to_cart').click(function(e){
+        e.preventDefault();
+        var item_id = $(this).attr('item_id');
+        $.ajax({
+            url: './ajax/add_to_cart',
+            type: 'POST',
+            data: {'csrfmiddlewaretoken': "{{csrf_token}}","item_type":"Dress","item_id":item_id},
+            success: function (data, status, xhr){
+                console.log(data);
+            }
+        });
+    });
+    // add an event listener to each div's h4 with id='remove_from_cart', send ajax request to remove from cart
+    $('.item #remove_from_cart').click(function(e){
+        e.preventDefault();
+        var item_id = $(this).attr('item_id');
+        $.ajax({
+            url: './ajax/remove_from_cart',
+            type: 'POST',
+            data: {'csrfmiddlewaretoken': "{{csrf_token}}","item_type":"Dress","item_id":item_id},
+            success: function (data, status, xhr){
+                console.log(data);
+            }
+        });
+    });
+    // add an event listener to button with id="get_cart". on click send ajax request
+    $('#get_cart').click(function(e){
+        e.preventDefault();
+        $.ajax({
+            url: './ajax/get_cart',
+            type: 'POST',
+            data: {'csrfmiddlewaretoken': "{{csrf_token}}"},
+            success: function (data, status, xhr){
+                console.log(data);
+            }
+        });
+    });
+    // add an event listener to button with id="clear_cart". on click send ajax request
+    $('#clear_cart').click(function(e){
+        e.preventDefault();
+        $.ajax({
+            url: './ajax/clear_cart',
+            type: 'POST',
+            data: {'csrfmiddlewaretoken': "{{csrf_token}}"},
+            success: function (data, status, xhr){
+                console.log(data);
+            }
+        });
+    });
+</script>
 {% endblock %}
