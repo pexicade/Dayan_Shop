@@ -74,7 +74,7 @@ class ProvinceAdmin(admin.ModelAdmin):
     ordering = ('name',)
     inlines = [CityInline]
 
-# admin.site.register(User, CustomUserAdmin)
-# admin.site.register(Province,ProvinceAdmin)
-# admin.site.register(City,CityAdmin)
-# admin.site.register(Address, AddressAdmin)
+admin.site.register(User, CustomUserAdmin)
+admin.site.register(Province,ProvinceAdmin)
+admin.site.register(City,CityAdmin)
+admin.site.register(Address, AddressAdmin)

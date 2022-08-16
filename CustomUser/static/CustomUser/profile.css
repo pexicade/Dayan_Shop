@@ -1,0 +1,20 @@
+.big_box{
+    width: 500px;
+    margin-bottom: 50px;
+    display: block;
+}
+
+.big_box > div> div{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+/* give it a ligh gray color */
+.big_box a{
+    text-decoration: none;
+    color: gray;
+}
+
+.big_box > div >div> h5{
+    padding-left: 20px;
+    margin: 0px;
+}

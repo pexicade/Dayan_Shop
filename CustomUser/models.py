@@ -6,6 +6,7 @@ from django.core.validators import RegexValidator
 from django.urls import reverse
 
 from .managers import CustomUserManager
+from .fit_choices import *
 
 class Province(models.Model):
     
@@ -42,22 +43,7 @@ class Address(models.Model):
     def __str__(self):
         return f'{self.city}, {self.address}'
 
-BODYTYPE_CHOICES = [
-    (0,'Athelic'),
-    (1,'Curvey'),
-    (2,'Hour glass'),
-    (3,'Long and Lean'),
-    (4,'Pear Shaped'),
-    (5,'Petite'),
-    (6,'Slender'),
-]
-HEIGHT_CHOICES = [
-    (0,'4\' 6"'),(1,'4\' 7"'),(2,'4\' 8"'),(3,'4\' 9"'),(4,'4\' 10"'),(5,'5\' 0"'),
-    (6,'5\' 1"'),(7,'5\' 2"'),(8,'5\' 3"'),(9,'5\' 4"'),(10,'5\' 5"'),(11,'5\' 6"'),
-    (12,'5\' 7"'),(13,'5\' 8"'),(14,'5\' 9"'),(15,'5\' 10"'),(16,'6\' 0"'),
-    (17,'6\' 1"'),(18,'6\' 2"'),(19,'6\' 3"'),(20,'6\' 4"'),(21,'6\' 5"'),
-    (22,'6\' 6"'),(23,'6\' 7"'),(24,'6\' 8"'),(25,'6\' 9"'),(26,'6\' 10"'),
-]
+
 
 class User(AbstractUser):
 
@@ -72,6 +58,9 @@ class User(AbstractUser):
     bodytype = models.IntegerField(_("body type"), choices=BODYTYPE_CHOICES, blank=True, null=True)
     height = models.IntegerField(_("height"), choices=HEIGHT_CHOICES, blank=True, null=True, help_text=_("select your height in feet"))
     weight = models.IntegerField(_("weight"), blank=True, null=True, help_text=_("enter your weight in kg"))
+    bust = models.IntegerField(_("bust"), choices=BUST_CHOICES, blank=True, null=True)
+    waist = models.IntegerField(_("waist"), choices=WAIST_CHOICES, blank=True, null=True)
+    hip = models.IntegerField(_("hip"), choices=HIP_CHOICES, blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -87,4 +76,14 @@ class User(AbstractUser):
     def get_full_name(self) -> str:
         if self.first_name and self.last_name:
             return f'{self.first_name} {self.last_name}'.title()
-        return ''
+        return self.first_name
+
+    def get_fit(self) -> dict:
+        return {
+            'bodytype': self.bodytype or '-',
+            'height': self.height or '-',
+            'weight': self.weight or '-',
+            'bust': self.bust or '-',
+            'waist': self.waist or '-',
+            'hip': self.hip or '-',
+        }

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import (load_cities, load_province_and_city, signupView, loginView, logoutView, profile)
+from .views import (load_cities, load_province_and_city, signupView, loginView, logoutView, profile, accountOverview)
 
 urlpatterns = [
     path('ajax/load_cities/', load_cities, name='load_cities'),
@@ -8,5 +8,6 @@ urlpatterns = [
     path('login/', loginView, name="login"),
     path('logout/', logoutView, name="logout"),
     path('profile/', profile, name="profile"),
+    path('', accountOverview, name="account_overview"),
 
 ]

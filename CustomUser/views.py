@@ -1,4 +1,3 @@
-import email
 from django.shortcuts import redirect, render
 from django.http import HttpRequest, JsonResponse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
@@ -8,11 +7,14 @@ from .models import City, Address
 from .forms import UserSignUpForm
 
 @login_required(login_url='login')
+def accountOverview(request: HttpRequest) -> HttpResponse:
+    return render(request, 'CustomUser/account_overview.html', {})
+
+@login_required(login_url='login')
 def profile(request: HttpRequest):
     user = request.user
-    if (name:=user.get_full_name()):
-        return HttpResponse(f'Hello {name}')
-    return HttpResponse(f'Hello {user.email}')
+    context = {'name': user.get_full_name(), 'email': user.email, 'fit': user.get_fit()}
+    return render(request, 'CustomUser/profile.html', context)
 
 #LOGIN, LOGOUT SIGNIP Views
 def signupView(request: HttpRequest) -> HttpResponse:

@@ -1,0 +1,41 @@
+{% extends 'CustomUser/base.html' %}
+{% load static %}
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'CustomUser/profile.css' %}">
+{% endblock %}
+{% block main %}
+    <div class="big_box" >
+        <h3>Accoun info</h3>
+        <h6><a href="edit">Edit</a></h6>
+        <div style="border: 1px solid black;">
+            <div>
+                <h5>{{name}}</h5>
+                <h5>{{email}}</h5>
+            </div>
+            
+        </div>
+    </div>
+    <div class="big_box" >
+        <h3>Fit Details</h3>
+        <h6><a href="fit">Edit</a></h6>
+        <div style="border: 1px solid black;">
+            <div>
+                <h5>Body type: {{fit.bodytype}}</h5>
+                <h5>Weight: {{fit.weight}}</h5>
+                <h5>Height: {{fit.height}}</h5>
+                <h5>Waist: {{fit.waist}}</h5>
+                <h5>Bust: {{fit.bust}}</h5>
+                <h5>Hips: {{fit.hip}}</h5>
+            </div>
+        </div>
+    </div>
+    <div class="big_box" >
+        <h3>Update password</h3>
+        <div style="border: 1px solid black;">
+            <div>
+                <h5><a href="password">Click here</a> to update your password.</h5>
+            </div>
+        </div>
+    </div>
+{% endblock %}
