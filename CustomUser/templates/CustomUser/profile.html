@@ -5,6 +5,12 @@
     <link rel="stylesheet" href="{% static 'CustomUser/profile.css' %}">
 {% endblock %}
 {% block main %}
+    <!-- create a blue div that shows {{msg}} if it exitst -->
+    {% if msg %}
+        <div class="alert alert-success" role="alert">
+            {{msg}}
+        </div>
+    {% endif %}
     <div class="big_box" >
         <h3>Accoun info</h3>
         <h6><a href="edit">Edit</a></h6>

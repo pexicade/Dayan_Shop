@@ -1,0 +1,158 @@
+{% extends 'CustomUser/base.html' %}
+{% load static %}
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'CustomUser/editprofile.css' %}">
+{% endblock %}
+{% block main %}
+    <div class="container">
+        <h3>Account Info</h3>
+        <form method="post" id="update_form">
+            {% csrf_token %}
+            <div class="textbox">
+                <div class="u-relative">
+                    <input type="text" type="text" name="first_name"  maxlength="120" class="c-form__input has-label-in label-is-up" id="first_name" value="{{fname}}">
+                    <label for="first_name" class="c-form__label-in">First Name</label>
+                </div>
+            </div>
+            <div class="textbox">
+                <div class="u-relative">
+                    <input type="text" type="text" name="last_name" maxlength="120" class="c-form__input has-label-in label-is-up" id="last_name" value="{{lname}}">
+                    <label for="last_name" class="c-form__label-in">Last Name</label>
+                </div>
+            </div>
+            <div class="textbox">
+                <div class="u-relative">
+                    <input type="text" type="text" name="email" maxlength="120" class="c-form__input has-label-in label-is-up" id="email" value="{{email}}">
+                    <label for="email" class="c-form__label-in">Email</label>
+                </div>
+                <h6 style="display: none;" id="email_message"></h6>
+            </div>
+            <div class="textbox">
+                <div class="u-relative">
+                    <input type="text" type="text" name="phonenumber" maxlength="120" class="c-form__input has-label-in label-is-up" id="phonenumber" value="{{phone}}">
+                    <label for="phonenumber" class="c-form__label-in">Phone Number</label>
+                </div>
+            </div>
+            <h6 style="display: none;" id="phonenumber_message"></h6>
+            <div class="birhdate">
+                <div>
+                    <h5><b>We want to celebrate you!</b></h5>
+                    <h6>Tell us your birthday so we can give you something special!
+                    </h6>
+                </div>
+                <div class="birthdatebox">
+                    <div class="textbox left">
+                        <div class="u-relative">
+                            <input type="text" type="text" name="birth_day" maxlength="120" class="c-form__input has-label-in label-is-up" id="birth_day"
+                            value="{{birthdate.day}}" style="width: 75px;">
+                            <label for="birth_day" class="c-form__label-in">Day</label>
+                        </div>
+                    </div>
+                    <div class="selectbox" style="margin-top: 35px;">
+                        <div class="u-relative">
+                            <select class="c-form__input has-label-in label-is-up" name="birth_month" selected="selected" id="birth_month">
+                                <option selected="selected" value="1" data-v-02984c37="">
+                                    January
+                               </option><option value="2" data-v-02984c37="">
+                                    February
+                               </option><option value="3" data-v-02984c37="">
+                                    March
+                               </option><option value="4" data-v-02984c37="">
+                                    April
+                               </option><option value="5" data-v-02984c37="">
+                                    May
+                               </option><option value="6" data-v-02984c37="">
+                                    June
+                               </option><option value="7" data-v-02984c37="">
+                                    July
+                               </option><option value="8" data-v-02984c37="">
+                                    August
+                               </option><option value="9" data-v-02984c37="">
+                                    September
+                               </option><option value="10" data-v-02984c37="">
+                                    October
+                               </option><option value="11" data-v-02984c37="">
+                                    November
+                               </option><option value="12" data-v-02984c37="">
+                                    December
+                               </option>
+                            </select>
+                            <label for="birth_month" class="c-form__label-in">Month</label>
+                        </div>
+                    </div>
+                    <div class="textbox">
+                        <div class="u-relative">
+                            <input type="text" type="text" name="birth_year" maxlength="120" class="c-form__input has-label-in label-is-up" id="birth_year"
+                            value="{{birthdate.year}}" style="width: 75px;">
+                            <label for="birth_year" class="c-form__label-in">Year</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit">UPDATE</button>
+        </form>
+    </div>
+<script>
+    // set the value of selectbox with id 'birht_month' from the {{birthdate.month}}
+    document.getElementById('birth_month').value = "{{birthdate.month}}";
+    const validateEmail = (email) => {
+        return String(email).toLowerCase().match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+    };
+    const validatePhone = (phone) => {
+        return phone==='' || String(phone).match(
+        /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
+        );
+    };
+    //check if phonenumber and email are valid on change and show a message beneath the textbox if it isnt valid. make border color red if it isnt valid.
+    document.getElementById('phonenumber').onchange = function() {
+        if (validatePhone(this.value)) {
+            this.style.borderColor = '#ccc';
+            document.getElementById('phonenumber_message').innerHTML = '';
+            document.getElementById('phonenumber_message').style.display = 'none';
+        } else {
+            this.style.borderColor = 'red';
+            document.getElementById('phonenumber_message').innerHTML = 'Invalid phone number';
+            document.getElementById('phonenumber_message').style.display = 'block';
+        }
+    };
+    document.getElementById('email').onchange = function() {
+        console.log('email changed', this.value);
+        if (validateEmail(this.value)) {
+            this.style.borderColor = '#ccc';
+            document.getElementById('email_message').innerHTML = '';
+            document.getElementById('email_message').style.display = 'none';
+        } else {
+            this.style.borderColor = 'red';
+            document.getElementById('email_message').innerHTML = 'Invalid email';
+            document.getElementById('email_message').style.display = 'block';
+        }
+    };
+    // check if fields are valid onclick on update button
+    document.getElementById('update_form').onsubmit = function() {
+        if (validateEmail(document.getElementById('email').value)) {
+            document.getElementById('email').style.borderColor = '#ccc';
+            document.getElementById('email_message').innerHTML = '';
+            document.getElementById('email_message').style.display = 'none';
+        } else {
+            document.getElementById('email').style.borderColor = 'red';
+            document.getElementById('email_message').innerHTML = 'Invalid email';
+            document.getElementById('email_message').style.display = 'block';
+            return false;
+        }
+        if (validatePhone(document.getElementById('phonenumber').value)) {
+            document.getElementById('phonenumber').style.borderColor = '#ccc';
+            document.getElementById('phonenumber_message').innerHTML = '';
+            document.getElementById('phonenumber_message').style.display = 'none';
+        } else {
+            document.getElementById('phonenumber').style.borderColor = 'red';
+            document.getElementById('phonenumber_message').innerHTML = 'Invalid phone number';
+            document.getElementById('phonenumber_message').style.display = 'block';
+            return false;
+        }
+        return true;
+    };
+</script>
+{% endblock %}

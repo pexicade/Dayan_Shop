@@ -44,9 +44,7 @@ class Address(models.Model):
         return f'{self.city}, {self.address}'
 
 
-
 class User(AbstractUser):
-
     username = None
     email = models.EmailField(_('email'), unique=True)
     first_name = models.CharField(_("first name"), max_length=150, blank=True)
@@ -80,10 +78,10 @@ class User(AbstractUser):
 
     def get_fit(self) -> dict:
         return {
-            'bodytype': self.bodytype or '-',
-            'height': self.height or '-',
-            'weight': self.weight or '-',
-            'bust': self.bust or '-',
-            'waist': self.waist or '-',
-            'hip': self.hip or '-',
+            'bodytype': self.bodytype,
+            'height': self.height,
+            'weight': self.weight,
+            'bust': self.bust,
+            'waist': self.waist,
+            'hip': self.hip
         }
