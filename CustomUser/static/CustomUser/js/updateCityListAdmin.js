@@ -35,7 +35,7 @@ $(document).ready(function(){
         console.log("ajax");
         const url = "http://127.0.0.1:8000/user/ajax/load_cities";
         const province_id = $("#id_province").val();
-        $.ajax({
+        $.ajax({    
             url: url,
             data: {
                 province_id: province_id

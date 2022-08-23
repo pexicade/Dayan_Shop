@@ -1,6 +1,9 @@
 {% extends 'shop/base.html' %}
 {% block content %}
     <h2 id="title"></h2>
+    <div style="margin: 25px;">
+        <button id="change_favorite"></button>
+    </div>
     <img id="img" src="" alt="">
     <script>
         $.ajax({
@@ -13,10 +16,45 @@
                     $('#title').text(data.item.name);
                     $('#img').attr('src', data.item.images[0].image_url);
                     $('#img').attr('alt', data.item.images[0].image_alt);
+                    if (data.item.is_favorite == false){
+                        $('#change_favorite').text('Add to favorite');
+                        $('#change_favorite').attr('class', 'btn btn-success');
+                        $('#change_favorite').attr('func','add_to')
+                    }else{
+                        $('#change_favorite').text('Remove from favorite');
+                        $('#change_favorite').attr('class', 'btn btn-danger');
+                        $('#change_favorite').attr('func','remove_from')
+                    }
+
                 }else{
                     alert(`Error: ${data.error}`);
                 }
             }
+        });
+        // ajax for add to favorite
+        $('#change_favorite').click(function () {
+            var func = $(this).attr('func');
+            $.ajax({
+                url: `../ajax/${func}_favorite`,
+                type: 'POST',
+                data: {'csrfmiddlewaretoken': "{{csrf_token}}","item_type":"{{ item_type }}","item_id":"{{item_id}}"},
+                success: function (data, status, xhr){
+                    console.log(data,func, func=='add_to');
+                    if (data.status == 'ok'){
+                        if (func=='add_to'){
+                            $('#change_favorite').text('Remove from favorite');
+                            $('#change_favorite').attr('class', 'btn btn-danger');
+                            $('#change_favorite').attr('func','remove_from')
+                        }else {
+                            $('#change_favorite').text('Add to favorite');
+                            $('#change_favorite').attr('class', 'btn btn-success');
+                            $('#change_favorite').attr('func','add_to')
+                        }
+                    }else{
+                        alert(`Error: ${data.error}`);
+                    }
+                }
+            });
         });
     </script>
 {% endblock %}

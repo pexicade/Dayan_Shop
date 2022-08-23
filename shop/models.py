@@ -1,9 +1,12 @@
-from tkinter import image_names
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
 from django.urls import reverse
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
+
+# from CustomUser.models import User
 
 import inspect
 from PIL import Image
@@ -12,7 +15,7 @@ import random
 import os
 from typing import Dict
 import json
-
+import inspect
 
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name=_('Name'))
@@ -260,16 +263,6 @@ class ItemImage(models.Model):
         }
     
 
-class Discount(models.Model):
-    name = models.CharField(_("name"), max_length=200, blank=False, null=False)
-    percent = models.PositiveIntegerField(_("percent"), blank=False, null=False)
-    code = models.CharField(_("code"), max_length=10, blank=False, null=False)
-    date_created = models.DateTimeField(verbose_name=_("date created"), default=timezone.now)
-    date_expired = models.DateTimeField(verbose_name=_("date expired"), blank=True, null=True)
-
-    def __str__(self) -> str:
-        return f'{self.name} {self.percent}%'
-
 class Color(models.Model):
     name = models.CharField(_('name'), max_length= 100, blank= False, null= False)
     hex_code_validator = RegexValidator(regex=r'^#(?:[0-9a-fA-F]{3}){1,2}$', message="Hex code must be in the format #RRGGBB")
@@ -285,6 +278,14 @@ class Color(models.Model):
             'color_code': self.color_code
         }
 
+
+# class Review(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('user'))
+#     item = models.ForeignKey('Kala', on_delete=models.CASCADE, verbose_name=_('item'))
+#     title = models.CharField(max_length=100, verbose_name=_('title'))
+#     text = models.TextField(verbose_name=_('text'))
+#     date = models.DateTimeField(auto_now_add=True, verbose_name=_('date'))
+
 class Item(models.Model):
     name = models.CharField(_('name'), max_length=150, blank= False, null= False)
     page_title = models.CharField(_('page title'), max_length=150, blank= True, null= True)
@@ -294,7 +295,9 @@ class Item(models.Model):
     specific_color = models.CharField(_('specific color'), max_length=100, blank= True, null= True)
     category = models.ManyToManyField(Category, verbose_name=_('category'))
     rate = models.CharField(_("rate"), max_length=4, default="0")
+    weight = models.CharField(_("weight"), max_length=10, default="0", help_text=_("Enter weight in grams"))
     rate_count = models.IntegerField(_("rate count"), default=0)
+    kala = GenericRelation('Kala', content_type_field='item_content_type', object_id_field='item_id')
     date_created = models.DateTimeField(verbose_name=_("date created"), default=timezone.now)
     date_updated = models.DateTimeField(verbose_name=_("date updated"), auto_now=True)
 
@@ -306,17 +309,11 @@ class Item(models.Model):
             self.rate = str(round(self.rate_count / self.rate_count, 1))
         if self.specific_color is None:
             self.specific_color = self.color.name
+        contenttype = ContentType.objects.get_for_model(self)
+        if Kala.objects.filter(item_content_type=contenttype, item_id=self.pk).count() == 0:
+            Kala.objects.create(item_content_type=contenttype, item_id=self.pk)
         super(Item, self).save(*args, **kwargs)
 
-    def to_json(self, exclude: list[str] = ['page_title','date_created','date_updated']):
-        data = {}
-        for field in self._meta.get_fields():
-            if field.name not in exclude:
-                if field.get_internal_type == 'ManyToManyField':
-                    data[field.name] = [item for item in getattr(self, field.name).all()]
-                else:
-                    data[field.name] = str(getattr(self, field.name))
-        return data
 
     class Meta:
         abstract = True
@@ -409,11 +406,8 @@ class Dress(Item):
     def __str__(self) -> str:
         return f'{self.name}'
 
-    def to_json(self, exclude: list[str] = []) -> dict:
-        if exclude:
-            data = super().to_json(exclude)
-        else:
-            data = super().to_json()
+    def to_json(self, exclude: list[str] = ['page_title','date_created','date_updated','kala', 'related']) -> dict:
+        data = {}
         for field in self._meta.get_fields():
             if field.name not in exclude:
                 if field.name == 'related':
@@ -433,5 +427,23 @@ class Dress(Item):
     def to_lower(self, value: str) -> str:
         return value.lower().strip()
 
-classes: list[models.Model] = {'Dress': Dress, 'Item': Item, 'Category': Category, 'Color': Color, 'Models': Models, 'SizeChoices': SizeChoices,
-'ClotheSizeInfo': ClotheSizeInfo, 'ItemImage': ItemImage}
+class testItem(Item):
+    testfield = models.CharField(max_length=100)
+
+class Kala(models.Model):
+    item_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    item_id = models.PositiveIntegerField()
+    item = GenericForeignKey('item_content_type', 'item_id')
+
+    def save(self, *args, **kwargs) -> None:
+        # only save it if its Item
+        if inspect.getmro(self.item_content_type.model_class())[-3].__name__ == 'Item':
+            super(Kala, self).save(*args, **kwargs)
+        else:
+            raise Exception('Kala can only be saved if its item is of type Item')
+    def __str__(self):
+        return f'{self.item_content_type.model} | {self.item}'
+
+item_dct: list[models.Model] = {'Dress': Dress, 'Item': Item}
+# , 'Category': Category, 'Color': Color, 'Models': Models, 'SizeChoices': SizeChoices,
+# 'ClotheSizeInfo': ClotheSizeInfo, 'ItemImage': ItemImage}

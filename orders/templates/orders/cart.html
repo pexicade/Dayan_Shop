@@ -1,0 +1,132 @@
+{% extends 'orders/base.html' %}
+
+{% load static %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'orders/cart.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div style="margin: 30px;">
+        <h3 style="padding: 10pxpx">Shipping info</h3>
+        <div class="container">
+            <form method="post">
+                {% csrf_token %}
+                <h4 style="padding-left: 5px;">Personal info</h4>
+                <div style="padding-left: 5px;">
+                    <div id="personal-info" style="width: 50%">
+                        <div class="input-group mb-3">
+                            <label for="email" class="input-group-text">Email</label>
+                            <input type="text" name="email" id="email" class="form-control" autofocus autocomplete="email">
+                        </div>
+                        <div class="input-group mb-3">
+                            <label for="fname" class="input-group-text">Name</label>
+                            <input type="text" name="fname" id="fname" class="form-control">
+                    </div>
+                    <div class="input-group mb-3">
+                        <label for="lname" class="input-group-text">Last name</label>
+                        <input type="text" name="lname" id="lname" class="form-control">
+                    </div>
+                    <div class="input-group mb-3">
+                        <label for="phone" class="input-group-text">Phone number</label>
+                        <input type="tel" name="phonenumber" id="phone" class="form-control">
+                    </div>
+                </div>
+                <h4 style="padding-left: 5px;">Choose your Address</h4>
+                <div id="address-box">
+                </div>
+                <!-- <button type="submit" class="btn btn-primary" disabled >Submit</button> -->
+                <button type="submit" class="c-btn-block tooltip1" id="submit-btn" disabled>
+                    Submit
+                    <span class="tooltiptext1">fill all the box</span>
+                </button>
+            </form>
+        </div>
+    </div>
+    <script>
+        // send ajax request to get the info
+        $(document).ready(function(){
+            $.ajax({
+                url: './ajax/get_info',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(data){    
+                    console.log(data);
+                    if (data.status==='ok'){
+                        $('#email').val(data.email);
+                        $('#fname').val(data.fname);
+                        $('#lname').val(data.lname);
+                        $('#phone').val(data.phone);
+                        // put all the addresses in the address box as radio buttons
+                        $('#address-box').empty();
+                        $('#address-box').append('<div style="input-group mb-3">');
+                        for (var i=0; i<data.addresses.length; i++){
+                            html = '<div class="form-check">';
+                            adrs = data.addresses[i];
+                            html += '<input class="form-check-input" type="radio" name="address" id="address'+i+'" value="'+adrs.id+'">';
+                            html += `<label class="form-check-label" for="address${i}"> ${adrs.province}, ${adrs.city}, ${adrs.address} </label>`;
+                            // add a font awesome icon to edit the address with a tag inside 
+                            html += `<a href="{% url 'edit_address' %}${adrs.id}?next_url={% url 'cart' %}" class="edit-address"><i class="fas fa-edit" style="padding-left: 10px;"></i></a>`;
+                            html += '</div>';
+                            $('#address-box').append(html);
+                        }
+                        $('#address-box').append('</div>');
+                    }else if(data.error == 'no addresses found'){
+                        alert('you need to add a new address first')
+                    }
+                    $('#address-box').append(`<h5><a href="{% url 'add_address'  %}?next_url=cart">Add a new address</a></h5>`);
+
+                }
+            });
+        });
+        // make the submit button enabled when all the fields are filled and an address is selected
+        $(document).ready(function(){
+            $('#email').on('input', function(){
+                check_fields()
+            });
+            $('#fname').on('input', function(){
+                check_fields()
+            });
+            $('#lname').on('input', function(){
+                check_fields()
+            });
+            $('#phone').on('input', function(){
+                check_fields()
+            });
+            $('input[name=address]').on('change', function(){
+                check_fields()
+            });
+        });
+        function check_fields(){
+            if ($('#email').val()!='' && $('#fname').val()!='' && $('#lname').val()!='' && $('#phone').val()!='' && $('input[name=address]:checked').val()!=undefined){
+                $('#submit-btn').removeAttr('disabled');
+                $('#submit-btn').css('border-color', '#222');
+            }else{
+                $('#submit-btn').prop('disabled', true);
+                console.log('herw');
+                $('#submit-btn').css('border-color', '#ff0000');
+            }
+        }
+        // send ajax request to get cart
+        $(document).ready(function(){
+            $.ajax({
+                url: '../shop/ajax/get_cart',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(data){    
+                    console.log(data);
+                    if (data.status == 'fail'){
+                        alert('no items in cart');
+                        location.replace('../shop/');
+                    }
+                }
+            });
+        });
+        // add event listener for edit icons in the address box. on
+    </script>
+{% endblock %}

@@ -26,6 +26,9 @@ class CustomUserAdmin(UserAdmin):
         ('Address', {
             'fields': ('address', )
         }),
+        ('Favorites',{
+            'fields': ('favorites',)
+        }),
         ('Permissions', {
             'fields': (
                 'is_active', 'is_staff', 'is_superuser',
@@ -40,7 +43,7 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'address','is_staff', 'is_active')}
+            'fields': ('email', 'password1', 'password2','is_staff', 'is_active')}
         ),
     )
     ordering = ('date_joined','email')
@@ -54,7 +57,7 @@ class AddressAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Address', {
-            'fields': ('province', 'city', 'address', 'postal_code')
+            'fields': ('user','province', 'city', 'address', 'postal_code')
         }),
     )
 

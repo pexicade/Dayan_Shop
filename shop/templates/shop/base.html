@@ -25,24 +25,26 @@
     {% block js %}{% endblock %}
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="header-content">
-                        <div class="header-content-inner" style="text-align: center;">
-                            <a style="text-decoration: none; color: black;" href="http://127.0.0.1:8000/shop/">
-                                <h3>
-                                    DAYAN
-                                </h3>
-                            </a>
-                            <hr>
+    {% block header %}
+        <header>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="header-content">
+                            <div class="header-content-inner" style="text-align: center;">
+                                <a style="text-decoration: none; color: black;" href="http://127.0.0.1:8000/shop/">
+                                    <h3>
+                                        DAYAN
+                                    </h3>
+                                </a>
+                                <hr>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
+    {% endblock %}
     {% block content%}
     {% endblock %}
 </body>

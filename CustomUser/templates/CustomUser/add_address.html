@@ -1,0 +1,93 @@
+{% extends 'CustomUser/base.html' %}
+{% load static %}
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'CustomUser/edit_fit.css' %}">
+{% endblock %}
+{% block main %}
+    <div class="container">
+        <div>
+            <h3 style="margin-bottom: 10px;">Add Address</h3>
+            <form method="post" id="update_form">
+                {% csrf_token %}
+                <div class="bigbox">
+                    <label style="margin-top: 5px;" for="province">Province</label>
+                    <div class="selectbox">
+                        <select style="margin-top: 6px;" name="province" id="province" class="form-select" aria-label="Default select example">
+                        </select>
+                    </div>
+                    <label style="margin-top: 5px;" for="city">City</label>
+                    <div class="selectbox">
+                        <select style="margin-top: 6px;" name="city" id="city" class="form-select" aria-label="Default select example">
+                        </select>
+                    </div>
+                    <label style="margin-top: 5px;" for="address">Address</label>
+                    <input type="text" class="form-control" placeholder="address" name="address" id="address" style="padding-left: 10px;">
+                    <label style="margin-top: 5px;" for="postal_code">Postal Code</label>
+                    <input type="text" class="form-control" placeholder="postal_code" name="postal_code" id="postal_code" style="padding-left: 10px;" maxlength="10" minlength="10">
+                </div>
+                <div class="btn-container" style="margin-top: 5px;">
+                    <button type="submit" class="c-btn-block" >
+                        ADD ADDRESS
+                    </button>
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="/user/profile" style="text-decoration: underline; cursor: pointer;color: #000;"
+                    aria-label="Cancel edit fit details">CANCEL</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        // send ajax to get provinces and fill the select box
+        $.ajax({
+            url: "{% url 'load_provinces' %}",
+            type: 'POST',
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(data) {
+                var provinces = data.provinces;
+                for (var i = 0; i < provinces.length; i++) {
+                    $('#province').append('<option value="' + provinces[i][0] + '">' + provinces[i][1] + '</option>');
+                }
+            }
+        });
+        // add event listener to province select box, on change send an ajax request to get the cities and fill the select box
+    
+        $('#province').change(function() {
+            $.ajax({
+                url: "{% url 'load_cities2' %}",
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'province_id': $('#province').val()
+                },
+                success: function(data) {
+                    console.log(data);
+                    $('#city').empty();
+                    var cities = data.cities;
+                    for (var i = 0; i < cities.length; i++) {
+                        $('#city').append('<option value="' + cities[i][0] + '">' + cities[i][1] + '</option>');
+                    }
+                }
+            });
+        });
+        $.ajax({
+                url: "{% url 'load_cities2' %}",
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'province_id': 1
+                },
+                success: function(data) {
+                    console.log(data);
+                    $('#city').empty();
+                    var cities = data.cities;
+                    for (var i = 0; i < cities.length; i++) {
+                        $('#city').append('<option value="' + cities[i][0] + '">' + cities[i][1] + '</option>');
+                    }
+                }
+            });
+    </script>
+{% endblock %}

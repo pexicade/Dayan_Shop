@@ -1,0 +1,21 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{%block title%}
+Checkout and shipping info
+{% endblock %}
+
+{% block css%}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'orders/base.css' %}">
+{% endblock %}
+
+{% block header %}
+    <header style="padding-left: 25px; margin: 10px;">
+        <h3 style="display: inline;">DAYAN</h3>
+        <h4 style="display: inline;">Secure Check out</h4>
+    </header>
+{% endblock %}
+
+{% block content %}
+
+{% endblock%}

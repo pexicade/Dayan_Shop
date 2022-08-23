@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.shortcuts import redirect, render
 
-from .models import Category, Brand, Models, SizeChoices, ClotheSizeInfo, ItemImage, Color, Dress
+from .models import Category, Brand, Models, SizeChoices, ClotheSizeInfo, ItemImage, Color, Dress, testItem, Kala
 from .forms import DressForm, ImageAdminForm
 
 class DressAdmin(admin.ModelAdmin):
@@ -39,3 +39,5 @@ admin.site.register(ClotheSizeInfo)
 admin.site.register(ItemImage,ItemImageAdmin)
 admin.site.register(Color)
 admin.site.register(Dress, DressAdmin)
+admin.site.register(testItem)
+admin.site.register(Kala)

@@ -3,7 +3,7 @@ from django.urls import path
 from .views import (
     index, itemView, get_item,
     add_to_cart, remove_from_cart, decrease_item_count_from_cart, clear_cart, get_cart,
-    
+    get_favorites, add_to_favorite, remove_from_favorite,
     )
 
 app_name = 'shop'
@@ -16,4 +16,7 @@ urlpatterns = [
     path('ajax/decrease_item_count_from_cart',decrease_item_count_from_cart,name="decrease_item_count_from_cart"),
     path('ajax/clear_cart',clear_cart,name="clear_cart"),
     path('ajax/get_cart',get_cart,name="get_cart"),
+    path('ajax/get_favorites',get_favorites,name="get_favorites"),
+    path('ajax/add_to_favorite',add_to_favorite,name="add_to_favorite"),
+    path('ajax/remove_from_favorite',remove_from_favorite,name="remove_from_favorite"),
 ]
